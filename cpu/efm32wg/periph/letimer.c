@@ -30,32 +30,18 @@
 #include "../emlib/inc/em_letimer.h"
 #include "../emlib/inc/em_cmu.h"
 #include "../emlib/inc/em_usart.h"
+
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-//volatile uint16_t CNT;
-//volatile uint32_t CC0;
-//volatile char CC0_FLAG;
-//volatile uint32_t CC1;
-//volatile char CC1_FLAG;
-
 #if defined LETIMER_EN
 
-/** Type for timer state */
-typedef struct {
-    void (*cb)(int);
-} timer_conf_t;
-
 /** Timer state memory */
-timer_conf_t config[TIMER_NUMOF];
+static timer_isr_ctx_t config[TIMER_NUMOF];
 
-int timer_init(tim_t dev, unsigned int ticks_per_us, void (*callback)(int))
+int timer_init(tim_t dev, unsigned long freq, timer_cb_t cb, void *arg)
 {
-    DEBUG("%s: ticks_per_us=%u\n", __func__, ticks_per_us);
-//	CC0 = 0;
-//	CC1 = 0;
-//	CC0_FLAG = 0;
-//	CC1_FLAG = 0;
+    DEBUG("%s: frequency=%u\n", __func__, freq);
 
     LETIMER_Reset(LETIMER0);
     LETIMER0->CNT = 0xffff;
@@ -77,7 +63,8 @@ int timer_init(tim_t dev, unsigned int ticks_per_us, void (*callback)(int))
     .repMode = letimerRepeatFree /* Count until stopped */
     };
     /* set callback function */
-    config[dev].cb = callback;
+    config[dev].cb = cb;
+    config[dev].arg = arg;
     /* Initialize LETIMER */
     LETIMER_Init(LETIMER0, &letimerInit);
     /* Enable NVIC interrupts */
@@ -97,37 +84,17 @@ int timer_set(tim_t dev, int channel, unsigned int timeout)
 
 int timer_set_absolute(tim_t dev, int channel, unsigned int value)
 {
-//    uint32_t cur;
     switch(channel) {
     case 0:
         LETIMER0->COMP0 = value ^ 0xffff;
         LETIMER0->IFC |= _LETIMER_IFC_COMP0_MASK;
         LETIMER0->IEN |= _LETIMER_IEN_COMP0_MASK;
-//	    cur = timer_read(0);
-//		if((value - cur) >= 0xffff){
-//			CC0 = value;
-//			CC0_FLAG = 1;
-//
-//		} else {
-//			LETIMER0->COMP0 = value^0xffff;
-//			LETIMER0->IFC |= _LETIMER_IFC_COMP0_MASK;
-//			LETIMER0->IEN |= _LETIMER_IEN_COMP0_MASK;
-//		}
         break;
     case 1:
         LETIMER0->COMP1 = value ^ 0xffff;
         LETIMER0->IFC |= _LETIMER_IFC_COMP1_MASK;
         LETIMER0->IEN |= _LETIMER_IEN_COMP1_MASK;
-//		cur = timer_read(0);
-//		if((value - cur) >= 0xffff){
-//			CC1 = value;
-//			CC1_FLAG = 1;
-//		} else {
-//			LETIMER0->COMP1 = value^0xffff;
-//			LETIMER0->IFC |= _LETIMER_IFC_COMP1_MASK;
-//			LETIMER0->IEN |= _LETIMER_IEN_COMP1_MASK;
-//		}
-//		break;
+		break;
     }
 
     return 0;
@@ -184,7 +151,6 @@ void timer_irq_disable(tim_t dev)
 void timer_reset(tim_t dev)
 {
     DEBUG("%s:\n", __func__);
-//    CNT = 0;
     LETIMER0->CNT = 0xffff;
 }
 
@@ -192,45 +158,16 @@ void LETIMER0_IRQHandler(void)
 {
     if(LETIMER0->IF & _LETIMER_IF_UF_MASK) {
         LETIMER0->IFC |= _LETIMER_IF_UF_MASK;
-//        ++CNT;
-//        puts("interrupt");
-//        uint32_t cnt = timer_read(0);
-//        if(CC0_FLAG) {
-//            if((CC0 - cnt) >= 0xffff) {
-//                CC0 -= 0xffff;
-//                DEBUG("%s: cc0 set\n", __func__);
-//            } else {
-//                LETIMER0->COMP0 = (CC0 ^ 0xffff) & 0xffff;
-//                LETIMER0->IFC |= _LETIMER_IFC_COMP0_MASK;
-//                LETIMER0->IEN |= _LETIMER_IEN_COMP0_MASK;
-//                CC0_FLAG = 0;
-//                DEBUG("%s: comp0 set\n", __func__);
-//            }
-//        }
-//        if(CC1_FLAG) {
-//            if((CC1 - cnt) >= 0xffff) {
-//                CC1 -= 0xffff;
-//                DEBUG("%s: cc1 set\n", __func__);
-//            } else {
-//                LETIMER0->COMP1 = (CC1 ^ 0xffff) & 0xffff;
-//                LETIMER0->IFC |= _LETIMER_IFC_COMP1_MASK;
-//                LETIMER0->IEN |= _LETIMER_IEN_COMP1_MASK;
-//                CC1_FLAG = 0;
-//                DEBUG("%s: comp1 set\n", __func__);
-//            }
-//        }
     } else if((LETIMER0->IF & _LETIMER_IF_COMP0_MASK) && (LETIMER0->IEN & _LETIMER_IEN_COMP0_MASK)) {
         LETIMER0->IFC |= _LETIMER_IFC_COMP0_MASK;
         LETIMER0->IEN &= ~_LETIMER_IEN_COMP0_MASK;
-//        CC0_FLAG = 0;
         DEBUG("%s: callback\n", __func__);
-        config[TIMER_0].cb(0);
+        config[TIMER_0].cb(config[TIMER_0].arg, 0);
     } else if((LETIMER0->IF & _LETIMER_IF_COMP1_MASK) && (LETIMER0->IEN & _LETIMER_IEN_COMP1_MASK)) {
         LETIMER0->IFC |= _LETIMER_IFC_COMP1_MASK;
         LETIMER0->IEN &= ~_LETIMER_IEN_COMP1_MASK;
-//        CC1_FLAG = 0;
         DEBUG("%s: callback\n", __func__);
-        config[TIMER_0].cb(1);
+        config[TIMER_0].cb(config[TIMER_0].arg, 1);
     }
     if(sched_context_switch_request) {
         thread_yield();
