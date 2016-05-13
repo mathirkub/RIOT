@@ -202,10 +202,10 @@ static int spi_init(spi_t dev, spi_conf_t conf, spi_speed_t speed,
             | (location << 8); //USART_ROUTE_CSPEN |
 
     /* Set GPIO config to slave */
-    gpio_dir_t gpioModeMosi = GPIO_DIR_INPUT;
-    gpio_dir_t gpioModeMiso = GPIO_DIR_PUSH_PULL_DRIVE;
+    gpio_mode_t gpioModeMosi = GPIO_IN;
+    gpio_mode_t gpioModeMiso = GPIO_OUT;
 //	gpio_dir_t gpioModeCs = GPIO_DIR_INPUT;
-    gpio_dir_t gpioModeClk = GPIO_DIR_INPUT;
+    gpio_mode_t gpioModeClk = GPIO_IN;
 
     /* Set to master and to control the CS line */
     if(master) {
@@ -215,10 +215,10 @@ static int spi_init(spi_t dev, spi_conf_t conf, spi_speed_t speed,
         /* CS should be manually triggered */
 //		spi->CTRL |= USART_CTRL_AUTOCS;
         /* Set GPIO config to master */
-        gpioModeMosi = GPIO_DIR_PUSH_PULL_DRIVE;
-        gpioModeMiso = GPIO_DIR_INPUT;
+        gpioModeMosi = GPIO_OUT;
+        gpioModeMiso = GPIO_IN;
 //		gpioModeCs = GPIO_DIR_PUSH_PULL;
-        gpioModeClk = GPIO_DIR_PUSH_PULL_DRIVE;
+        gpioModeClk = GPIO_OUT;
     } else {
         /* Enabling TX and RX */
         spi->CMD = USART_CMD_MASTERDIS | USART_CMD_TXEN | USART_CMD_RXEN;
@@ -234,34 +234,34 @@ static int spi_init(spi_t dev, spi_conf_t conf, spi_speed_t speed,
     case 0:
         switch(location) {
         case 0: /* IO configuration (USART 0, Location #0) */
-            gpio_init(GPIO_T(GPIO_PORT_E, 10), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_E, 11), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_E, 10), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_E, 11), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_E, 13), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_E, 12), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_E, 12), gpioModeClk); /* Clock */
             break;
         case 1: /* IO configuration (USART 0, Location #1) */
-            gpio_init(GPIO_T(GPIO_PORT_E, 7), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_E, 6), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_E, 7), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_E, 6), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_E, 4), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_E, 5), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_E, 5), gpioModeClk); /* Clock */
             break;
         case 2: /* IO configuration (USART 0, Location #2) */
-            gpio_init(GPIO_T(GPIO_PORT_C, 11), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_C, 10), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_C, 11), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_C, 10), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_C, 8), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_C, 9), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_C, 9), gpioModeClk); /* Clock */
             break;
         case 4:
-            gpio_init(GPIO_T(GPIO_PORT_B, 7), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_B, 8), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_B, 7), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_B, 8), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_B, 14), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_B, 13), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_B, 13), gpioModeClk); /* Clock */
             break;
         case 5:
-            gpio_init(GPIO_T(GPIO_PORT_C, 0), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_C, 1), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_C, 0), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_C, 1), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_C, 14), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_C, 13), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_C, 13), gpioModeClk); /* Clock */
             break;
         default:
             return -1;
@@ -271,22 +271,22 @@ static int spi_init(spi_t dev, spi_conf_t conf, spi_speed_t speed,
     case 1:
         switch(location) {
         case 0: /* IO configuration (USART 1, Location #0) */
-            gpio_init(GPIO_T(GPIO_PORT_C, 0), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_C, 1), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_C, 0), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_C, 1), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_B, 8), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_B, 7), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_B, 7), gpioModeClk); /* Clock */
             break;
         case 1: /* IO configuration (USART 1, Location #1) */
-            gpio_init(GPIO_T(GPIO_PORT_D, 0), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_D, 1), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_D, 0), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_D, 1), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_D, 3), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_D, 2), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_D, 2), gpioModeClk); /* Clock */
             break;
         case 2: /* IO configuration (USART 1, Location #1) */
-            gpio_init(GPIO_T(GPIO_PORT_D, 7), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_D, 6), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_D, 7), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_D, 6), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_F, 1), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_F, 0), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_F, 0), gpioModeClk); /* Clock */
             break;
         default:
             return -1;
@@ -296,16 +296,16 @@ static int spi_init(spi_t dev, spi_conf_t conf, spi_speed_t speed,
     case 2:
         switch(location) {
         case 0: /* IO configuration (USART 2, Location #0) */
-            gpio_init(GPIO_T(GPIO_PORT_C, 2), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_C, 3), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_C, 2), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_C, 3), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_C, 5), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_C, 4), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_C, 4), gpioModeClk); /* Clock */
             break;
         case 1: /* IO configuration (USART 2, Location #1) */
-            gpio_init(GPIO_T(GPIO_PORT_B, 3), gpioModeMosi, GPIO_PULLDOWN); /* MOSI */
-            gpio_init(GPIO_T(GPIO_PORT_B, 4), gpioModeMiso, GPIO_PULLDOWN); /* MISO */
+            gpio_init(GPIO_T(GPIO_PORT_B, 3), gpioModeMosi); /* MOSI */
+            gpio_init(GPIO_T(GPIO_PORT_B, 4), gpioModeMiso); /* MISO */
 //			gpio_init(GPIO_T(GPIO_PORT_B, 6), gpioModeCs, GPIO_PULLDOWN); /* CS */
-            gpio_init(GPIO_T(GPIO_PORT_B, 5), gpioModeClk, GPIO_PULLDOWN); /* Clock */
+            gpio_init(GPIO_T(GPIO_PORT_B, 5), gpioModeClk); /* Clock */
             break;
         default:
             return -1;

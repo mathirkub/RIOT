@@ -22,7 +22,7 @@
 #include "sched.h"
 #include "thread.h"
 #include "periph/gpio.h"
-#include "periph_cpu.h"
+#include "../include/periph_cpu.h"
 #include "periph_conf.h"
 
 /**
@@ -57,42 +57,54 @@ static inline uint32_t _pin(gpio_t gpio) {
 	return (uint32_t) (gpio & 0xff);
 }
 
-int gpio_init(gpio_t gpio, gpio_dir_t mode, gpio_pp_t pullup)
+int gpio_init(gpio_t gpio, gpio_mode_t mode)//gpio_dir_t mode, gpio_pp_t pullup)
 {
-
-    if(GPIO_PULLUP == pullup) {
-        /* High */
-        gpio_set(gpio);
-        if(GPIO_DIR_IN == mode) {
-            mode = GPIO_DIR_INPUT_PULL;
-        }
-    } else if(GPIO_PULLDOWN == pullup) {
-        /* Low */
+    gpio_dir_t mode_efm;
+    switch(mode){
+    case GPIO_IN:
+        mode_efm = GPIO_DIR_INPUT;
+        break;
+    case GPIO_IN_PD:
         gpio_clear(gpio);
-        if(GPIO_DIR_IN == mode) {
-            mode = GPIO_DIR_INPUT_PULL;
-        }
+        mode_efm = GPIO_DIR_INPUT_PULL;
+        break;
+    case GPIO_IN_PU:
+        gpio_set(gpio);
+        mode_efm = GPIO_DIR_INPUT_PULL;
+        break;
+    case GPIO_OUT:
+        mode_efm = GPIO_DIR_PUSH_PULL;
+        break;
+    case GPIO_OD:
+        mode_efm = GPIO_DIR_WIRED_AND;
+        break;
+    case GPIO_OD_PU:
+        gpio_set(gpio);
+        mode_efm = GPIO_DIR_WIRED_AND_PULLUP;
+        break;
+    default:
+        return false;
     }
 
     /* There are two registers controlling the pins for each port. The MODEL
      * register controls pins 0-7 and MODEH controls pins 8-15. */
     if(_pin(gpio) < 8) {
         GPIO->P[_port(gpio)].MODEL = (GPIO->P[_port(gpio)].MODEL
-        & ~(0xF << (_pin(gpio) * 4))) | (mode << (_pin(gpio) * 4));
+        & ~(0xF << (_pin(gpio) * 4))) | (mode_efm << (_pin(gpio) * 4));
     } else {
         GPIO->P[_port(gpio)].MODEH = (GPIO->P[_port(gpio)].MODEH
                 & ~(0xF << ((_pin(gpio) - 8) * 4)))
-                | (mode << ((_pin(gpio) - 8) * 4));
+                | (mode_efm << ((_pin(gpio) - 8) * 4));
     }
 
     return 0;
 }
 
-int gpio_init_int(gpio_t gpio, gpio_pp_t pullup, gpio_flank_t flank, gpio_cb_t cb, void *arg)
+int gpio_init_int(gpio_t gpio, gpio_mode_t mode, gpio_flank_t flank, gpio_cb_t cb, void *arg)// gpio_pp_t pullup
 {
     uint32_t tmp = 0;
 
-    gpio_init(gpio, GPIO_DIR_INPUT, pullup);
+    gpio_init(gpio, mode);
 
     /* configure and save exti configuration struct */
     exti_chan[_pin(gpio)].cb = cb;
@@ -171,8 +183,7 @@ void gpio_write(gpio_t pin, int value) {
 }
 
 void gpio_drive(gpio_port port, gpio_drive_strength mode){
-	GPIO->P[port].CTRL = (GPIO->P[port].CTRL & ~(_GPIO_P_CTRL_DRIVEMODE_MASK))
-			  | (mode << _GPIO_P_CTRL_DRIVEMODE_SHIFT);
+	GPIO->P[port].CTRL = (GPIO->P[port].CTRL & ~(_GPIO_P_CTRL_DRIVEMODE_MASK)) | (mode << _GPIO_P_CTRL_DRIVEMODE_SHIFT);
 }
 
 void GPIO_EVEN_IRQHandler(void) {

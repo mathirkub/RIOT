@@ -12,11 +12,15 @@
 #define CPU_PERIPH_H_
 
 #include "cpu.h"
-#include "periph/dev_enums.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief   Length of the CPU_ID in octets
+ */
+#define CPUID_LEN           (8U)
 
 /** GPIO drive mode. */
 typedef enum {
@@ -34,7 +38,9 @@ typedef enum {
  * @brief   Overwrite the default gpio_t type definition
  * @{
  */
+
 #define HAVE_GPIO_T
+
 typedef uint16_t gpio_t;
 /** @} */
 

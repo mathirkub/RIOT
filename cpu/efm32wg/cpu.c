@@ -31,7 +31,6 @@ void cpu_init(void)
 {
     /* initialize the Cortex-M core */
     cortexm_init();
-    enableIRQ();
     /* chip initialization */
     CHIP_Init();
     SystemInit();

@@ -35,14 +35,12 @@ extern "C" {
 #define F_CPU               CLOCK_CORECLOCK
 
 /**
- * @name Define UART device and baudrate for stdio
+ * @brief   Standard input/output device configuration
  * @{
  */
-#define STDIO               UART_2
-#define STDIO_BAUDRATE      (9600)
-#define STDIO_RX_BUFSIZE    (64U)
-#define STDIO_HARD          1
-#define STDIO_HARD_LINELENGTH   80
+#define UART_STDIO_DEV              (UART_2)
+#define UART_STDIO_BAUDRATE         (9600)
+#define UART_STDIO_RX_BUFSIZE       (64U)
 /** @} */
 
 /**

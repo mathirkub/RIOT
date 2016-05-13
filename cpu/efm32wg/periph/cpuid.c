@@ -16,7 +16,7 @@
 
 void cpuid_get(void *id)
 {
-    memcpy(id, (void *)(EFM32WG_CPUID_ADDR), CPUID_ID_LEN);
+    memcpy(id, (void *)(EFM32WG_CPUID_ADDR), CPUID_LEN);
 }
 
 /** @} */

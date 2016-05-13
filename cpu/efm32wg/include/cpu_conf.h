@@ -13,7 +13,8 @@
 #ifndef __CPU_CONF_H
 #define __CPU_CONF_H
 
-#include "ef32wg_headers/em_device.h"
+#include "efm32wg990f256.h"
+#include "cpu_conf_common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,11 +30,6 @@ extern "C" {
 #define CPU_IRQ_NUMOF                   (40U)
 #define CPU_FLASH_BASE                  FLASH_BASE
 /** @} */
-
-/**
- * @brief Length for reading CPU_ID
- */
-#define CPUID_ID_LEN                    (8)
 
 /**
  * @name CC110X buffer size definitions for the stm32f4

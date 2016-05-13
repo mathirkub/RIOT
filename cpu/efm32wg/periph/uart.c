@@ -186,10 +186,9 @@ int uart_init_blocking(uart_t _uart, uint32_t baudrate)
 #if UART_2_EN
     case UART_2:
         CMU_ClockEnable(cmuClock_LEUART0, true);
-        gpio_init(GPIO_T(UART_2_PORT, UART_2_TX_PIN), GPIO_DIR_PUSH_PULL,
-                GPIO_PULLUP);
-        gpio_init(GPIO_T(UART_2_PORT, UART_2_RX_PIN), GPIO_DIR_INPUT,
-                GPIO_PULLDOWN);
+        gpio_set(GPIO_T(UART_2_PORT, UART_2_TX_PIN));
+        gpio_init(GPIO_T(UART_2_PORT, UART_2_TX_PIN), GPIO_OUT);
+        gpio_init(GPIO_T(UART_2_PORT, UART_2_RX_PIN), GPIO_IN);
         LEUART_Reset(UART_2_DEV);
         leuartInit.enable = leuartEnable;
         leuartInit.baudrate = baudrate;

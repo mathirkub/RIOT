@@ -11,8 +11,6 @@
  */
 
 #include "./include/board.h"
-#include "../../cpu/efm32wg/emlib/inc/em_cmu.h"
-#include "../../cpu/efm32wg/emlib/inc/em_gpio.h"
 #include "em_cmu.h"
 
 static void leds_init(void);

@@ -1,8 +1,17 @@
 /*
- * cc1125_params.h
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup   board_rf_ism_mod_2_1
+ * @{
  *
- *  Created on: 10 lis 2015
- *      Author: mateusz
+ * @file
+ * @brief     cc112x board specific configuration
+ *
+ * @author      Mateusz Kubaszek <mathir.km.riot@gmail.com>
  */
 
 #ifndef CC1125_PARAMS_H_
