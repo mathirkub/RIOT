@@ -51,16 +51,16 @@ int cc112x_setup(cc112x_t *dev, const cc112x_params_t *params)
 
     /* Configure chip-select */
     int ret = 0;
-    ret += gpio_init(dev->params.reset, GPIO_DIR_OUT, GPIO_PULLUP);
-    ret += gpio_init(dev->params.cs, GPIO_DIR_OUT, GPIO_PULLUP);
-
+    ret += gpio_init(dev->params.reset, GPIO_OUT);
+    gpio_set(dev->params.reset);
+    ret += gpio_init(dev->params.cs, GPIO_OUT);
     gpio_set(dev->params.cs);
 
     /* Configure GPIO1 don't need to be configured. SPI configuration does it. */
     /* Configure SPI */
     ret += spi_acquire(dev->params.spi);
     ret += spi_init_master(dev->params.spi, SPI_CONF_FIRST_RISING,
-            SPI_SPEED_5MHZ);
+            SPI_SPEED_1MHZ);
     ret += spi_release(dev->params.spi);
 
 #ifndef CC112X_DONT_RESET
@@ -154,12 +154,13 @@ int cc112x_setup(cc112x_t *dev, const cc112x_params_t *params)
     /* Set default channel number */
     cc112x_set_channel(dev, CC112X_DEFAULT_CHANNEL);
     /* set default node id */
-#ifdef CPUID_ID_LEN
-    if(CPUID_ID_LEN > 0) {
-        char cpuid[CPUID_ID_LEN];
-        cpuid_get(cpuid);
-        cc112x_set_address(dev, (uint8_t)cpuid[0]);
+#if CPUID_LEN
+    char cpuid[CPUID_LEN];
+    cpuid_get(cpuid);
+    for (int i = 1; i < CPUID_LEN; i++) {
+        cpuid[0] ^= cpuid[i];
     }
+    cc112x_set_address(dev, (uint8_t) cpuid[0]);
 #endif
 
     LOG_INFO("cc112x: initialized with address=%u and channel=%i\n",

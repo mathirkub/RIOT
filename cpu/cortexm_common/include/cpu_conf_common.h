@@ -38,13 +38,13 @@ extern "C" {
  * @{
  */
 #ifndef THREAD_EXTRA_STACKSIZE_PRINTF
-#define THREAD_EXTRA_STACKSIZE_PRINTF   (512)
+#define THREAD_EXTRA_STACKSIZE_PRINTF   (128)
 #endif
 #ifndef THREAD_STACKSIZE_DEFAULT
 #define THREAD_STACKSIZE_DEFAULT        (1024)
 #endif
 #ifndef THREAD_STACKSIZE_IDLE
-#define THREAD_STACKSIZE_IDLE           (256)
+#define THREAD_STACKSIZE_IDLE           (1024)
 #endif
 /** @} */
 

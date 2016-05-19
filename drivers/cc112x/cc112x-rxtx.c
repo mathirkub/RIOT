@@ -112,7 +112,7 @@ int _rx_frame(netdev2_cc112x_t *cc112x_netdev)
                 (unsigned )cc112x->rx_pkt_buf.packet.address,
                 cc112x->rx_pkt_buf.packet.length - 3);
         /* let someone know that we've got a packet */
-        cc112x_netdev->netdev.event_callback(&cc112x_netdev->netdev, NETDEV2_EVENT_RX_COMPLETE, NULL);
+        cc112x_netdev->netdev.event_callback(&cc112x_netdev->netdev, NETDEV2_EVENT_ISR, NULL);
     } else {
         LOG_INFO("%s:%s:%u crc-error\n", RIOT_FILE_RELATIVE, __func__, __LINE__);
         return 0;

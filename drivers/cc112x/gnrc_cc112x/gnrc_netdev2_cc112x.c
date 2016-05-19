@@ -17,7 +17,7 @@
 #include "net/gnrc/netdev2.h"
 #include "od.h"
 
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_WARNING
 #include "log.h"
 
 static int _send(gnrc_netdev2_t *gnrc_netdev2, gnrc_pktsnip_t *pkt)
@@ -204,9 +204,10 @@ static gnrc_pktsnip_t *_recv(gnrc_netdev2_t *gnrc_netdev2)
     LOG_INFO("gnrc_netdev2_cc112x: received packet from %02x of length %u\n",
             (unsigned)cc112x_pkt->phy_src,
             (unsigned)cc112x_pkt->length-CC112X_HEADER_LENGTH);
-//#if defined(MODULE_OD) && ENABLE_DEBUG
+#if defined(MODULE_OD) && ENABLE_DEBUG
     od_hex_dump(cc112x_pkt->data, payload_length, OD_WIDTH_DEFAULT);
-//#endif
+#endif
+//    od_hex_dump(cc112x_pkt->data, payload_length, OD_WIDTH_DEFAULT);
 
     pkt->next = netif_hdr;
 

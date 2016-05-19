@@ -41,7 +41,7 @@ static int _send(netdev2_t *dev, const struct iovec *vector, int count)
     return cc112x_send(&netdev2_cc112x->cc112x, cc112x_pkt);
 }
 
-static int _recv(netdev2_t *dev, char* buf, int len)
+static int _recv(netdev2_t *dev, char* buf, int len, void *info)
 {
     DEBUG("%s:%u\n", __func__, __LINE__);
 
@@ -58,28 +58,20 @@ static int _recv(netdev2_t *dev, char* buf, int len)
 
 static inline int _get_iid(netdev2_t *netdev, eui64_t *value, size_t max_len)
 {
-    if(max_len < sizeof(eui64_t)) {
+    cc112x_t *cc112x = &((netdev2_cc112x_t*) netdev)->cc112x;
+    uint8_t *eui64 = (uint8_t*)value;
+
+    if(max_len<sizeof(eui64_t)) {
         return -EOVERFLOW;
     }
 
-    uint8_t *eui64 = (uint8_t*)value;
-#ifdef CPUID_ID_LEN
-    int n = (CPUID_ID_LEN < sizeof(eui64_t)) ? CPUID_ID_LEN : sizeof(eui64_t);
+    /* make address compatible to https://tools.ietf.org/html/rfc6282#section-3.2.2*/
+    memset(eui64, 0, sizeof(eui64_t));
+    eui64[3] = 0xff;
+    eui64[4] = 0xfe;
+    eui64[7] = cc112x->radio_address;
 
-    char cpuid[CPUID_ID_LEN];
-    cpuid_get(cpuid);
-
-    memcpy(eui64 + 8 - n, cpuid, n);
-
-#else
-    for (int i = 0; i < 8; i++) {
-        eui64[i] = i;
-    }
-#endif
-
-    /* make sure we mark the address as non-multicast and not globally unique */
-    eui64[0] &= ~(0x01);
-    eui64[0] |= 0x02;
+        return sizeof(eui64_t);
 
     return sizeof(eui64_t);
 }
@@ -154,26 +146,10 @@ static int _set(netdev2_t *dev, netopt_t opt, void *value, size_t value_len)
     return 0;
 }
 
-//static void _netdev2_cc112x_isr(void *arg)
-////{
-////    netdev2_t *netdev2 = (netdev2_t*)arg;
-////    netdev2->event_callback(netdev2, NETDEV2_EVENT_ISR, netdev2->isr_arg);
-////}
-
-//static void _netdev2_cc112x_rx_callback(void *arg)
-//{
-//    DEBUG("%s:%u\n", __func__, __LINE__);
-//    netdev2_t *netdev2 = (netdev2_t*)arg;
-//    cc112x_t *cc112x = &((netdev2_cc112x_t*)arg)->cc112x;
-//    gpio_irq_disable(cc112x->params.gpio2);
-//    netdev2->event_callback(netdev2, NETDEV2_EVENT_RX_COMPLETE, netdev2->isr_arg);
-//}
-//
-//static void _isr(netdev2_t *dev)
-//{
-//    cc112x_t *cc112x = &((netdev2_cc112x_t*)dev)->cc112x;
-//    cc112x_isr_handler(cc112x, _netdev2_cc112x_rx_callback, (void*)dev);
-//}
+static void _isr(netdev2_t *dev)
+{
+    dev->event_callback(dev, NETDEV2_EVENT_RX_COMPLETE, NULL);
+}
 
 static int _init(netdev2_t *dev)
 {
@@ -181,7 +157,7 @@ static int _init(netdev2_t *dev)
     netdev2_cc112x_t *cc112x_netdev = ((netdev2_cc112x_t*)dev);
     cc112x_t *cc112x = &((netdev2_cc112x_t*)dev)->cc112x;
 
-    gpio_init_int(cc112x->params.gpio2, GPIO_PULLDOWN, GPIO_BOTH, &cc112x_isr_handler, (void*)cc112x_netdev);
+    gpio_init_int(cc112x->params.gpio2, GPIO_IN_PD, GPIO_BOTH, &cc112x_isr_handler, (void*)cc112x_netdev);
 
     gpio_irq_disable(cc112x->params.gpio2);
 
@@ -196,7 +172,7 @@ const netdev2_driver_t netdev2_cc112x_driver = {
         .recv = _recv,
         .init = _init,
         .get = _get,
-        .isr = NULL,
+        .isr = _isr,
         .set = _set};
 
 int netdev2_cc112x_setup(netdev2_cc112x_t *netdev2_cc112x,

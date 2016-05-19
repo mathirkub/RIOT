@@ -64,7 +64,7 @@ void cc112x_writeburst_reg(cc112x_t *dev, uint16_t addr, const char *src, uint8_
 	unsigned int cpsr;
 	spi_acquire( dev->params.spi );
 	cc112x_cs( dev );
-	cpsr = disableIRQ();
+	cpsr = irq_disable();
     /* In writing and reading should be recognition between normal and
      * extended address list.
      */
@@ -83,7 +83,7 @@ void cc112x_writeburst_reg(cc112x_t *dev, uint16_t addr, const char *src, uint8_
 	}
 
     gpio_set(dev->params.cs);
-    restoreIRQ(cpsr);
+    irq_restore(cpsr);
     spi_release(dev->params.spi);
 }
 
@@ -92,7 +92,7 @@ void cc112x_readburst_reg(cc112x_t *dev, uint16_t addr, char *buffer, uint8_t co
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cc112x_cs(dev);
-    cpsr = disableIRQ();
+    cpsr = irq_disable();
     if(addr & 0xff00){
     	/* extended address */
     	spi_transfer_byte( dev->params.spi, 0x2f | CC112X_READ | CC112X_BURST, NULL );
@@ -105,7 +105,7 @@ void cc112x_readburst_reg(cc112x_t *dev, uint16_t addr, char *buffer, uint8_t co
         ++a;
     }
     gpio_set(dev->params.cs);
-    restoreIRQ(cpsr);
+    irq_restore(cpsr);
     spi_release(dev->params.spi);
 }
 
@@ -116,7 +116,7 @@ void cc112x_write_reg(cc112x_t *dev, uint16_t addr, uint8_t value)
 	uint32_t cpsr;
     spi_acquire(dev->params.spi);
     cc112x_cs(dev);
-    cpsr = disableIRQ();
+    cpsr = irq_disable();
     if(addr & 0xff00){
 		/* extended address */
 		spi_transfer_byte( dev->params.spi, 0x2f | CC112X_WRITE | CC112X_SINGLE, NULL );
@@ -127,7 +127,7 @@ void cc112x_write_reg(cc112x_t *dev, uint16_t addr, uint8_t value)
     spi_transfer_byte( dev->params.spi, value, NULL );
 
     gpio_set(dev->params.cs);
-    restoreIRQ(cpsr);
+    irq_restore(cpsr);
     spi_release(dev->params.spi);
     return;
 }
@@ -138,7 +138,7 @@ uint8_t cc112x_read_reg(cc112x_t *dev, uint16_t addr)
     uint32_t cpsr;
     spi_acquire(dev->params.spi);
     cc112x_cs(dev);
-    cpsr = disableIRQ();
+    cpsr = irq_disable();
     if(addr & 0xff00){
 		/* extended address */
 		spi_transfer_byte( dev->params.spi, 0x2f | CC112X_READ | CC112X_SINGLE, NULL );
@@ -148,7 +148,7 @@ uint8_t cc112x_read_reg(cc112x_t *dev, uint16_t addr)
 	}
     spi_transfer_byte( dev->params.spi, CC112X_NOBYTE, &result );
     gpio_set(dev->params.cs);
-    restoreIRQ(cpsr);
+    irq_restore(cpsr);
     spi_release(dev->params.spi);
     return (uint8_t) result;
 }
@@ -159,10 +159,10 @@ uint8_t cc112x_read_status(cc112x_t *dev, uint16_t addr)
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cc112x_cs(dev);
-    cpsr = disableIRQ();
+    cpsr = irq_disable();
     spi_transfer_reg(dev->params.spi, addr | CC112X_READ | CC112X_BURST, CC112X_NOBYTE, &result);
     gpio_set(dev->params.cs);
-    restoreIRQ(cpsr);
+    irq_restore(cpsr);
     spi_release(dev->params.spi);
     return (uint8_t) result;
 }
@@ -178,10 +178,10 @@ uint8_t cc112x_strobe(cc112x_t *dev, uint8_t c)
     unsigned int cpsr;
     spi_acquire(dev->params.spi);
     cc112x_cs(dev);
-    cpsr = disableIRQ();
+    cpsr = irq_disable();
     spi_transfer_byte(dev->params.spi, c, &result);
     gpio_set(dev->params.cs);
-    restoreIRQ(cpsr);
+    irq_restore(cpsr);
     spi_release(dev->params.spi);
     return (uint8_t) result;
 }
