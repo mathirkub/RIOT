@@ -167,7 +167,7 @@ int cc112x_send(cc112x_t *dev, cc112x_pkt_t *packet)
     if(!(RADIO_IDLE == dev->radio_state || RADIO_RX == dev->radio_state)){
         LOG_WARNING("%s:%s:%u: Invalid state for sending: %x\n", RIOT_FILE_RELATIVE, __func__, __LINE__, (dev->radio_state));
         while(!(RADIO_IDLE == dev->radio_state || RADIO_RX == dev->radio_state)){
-            xtimer_usleep(10000);
+            xtimer_usleep(5000);
             ++cnt;
             if(100 == cnt){
                 LOG_ERROR("%s:%s:%u: Too long or in a inapropriate state: %x\n", RIOT_FILE_RELATIVE, __func__, __LINE__, (dev->radio_state));

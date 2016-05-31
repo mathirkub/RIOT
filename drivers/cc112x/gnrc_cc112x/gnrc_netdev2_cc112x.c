@@ -199,7 +199,7 @@ static gnrc_pktsnip_t *_recv(gnrc_netdev2_t *gnrc_netdev2)
 
     ((gnrc_netif_hdr_t *)netif_hdr->data)->if_pid = thread_getpid();
     ((gnrc_netif_hdr_t *)netif_hdr->data)->lqi = cc112x->rx_pkt_buf.lqi;
-    ((gnrc_netif_hdr_t *)netif_hdr->data)->rssi = cc112x->rx_pkt_buf.rssi;
+    ((gnrc_netif_hdr_t *)netif_hdr->data)->rssi = (-cc112x->rx_pkt_buf.rssi);
 
     LOG_INFO("gnrc_netdev2_cc112x: received packet from %02x of length %u\n",
             (unsigned)cc112x_pkt->phy_src,

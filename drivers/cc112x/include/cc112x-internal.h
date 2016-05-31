@@ -29,7 +29,7 @@ extern "C" {
 #endif
 
 #define CC112X_RXBUF_SIZE           (2)
-#define CC112X_MAX_DATA_LENGTH      (120)
+#define CC112X_MAX_DATA_LENGTH      (58+64)
 
 #define CC112X_HEADER_LENGTH        (3)     /**< Header covers SRC, DST and
                                                  FLAGS */
@@ -120,7 +120,7 @@ typedef struct __attribute__((packed))
  * @brief struct holding cc112x packet + metadata
  */
 typedef struct {
-    uint8_t rssi;                           /**< RSSI value */
+    int8_t rssi;                           /**< RSSI value */
     uint8_t lqi;                            /**< link quality indicator */
     cc112x_pkt_t packet;                    /**< whole packet */
 } cc112x_pkt_buf_t;

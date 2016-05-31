@@ -73,7 +73,8 @@ extern "C" {
             {CC112X_SYMBOL_RATE1, 0x99},
             {CC112X_SYMBOL_RATE0, 0x9A},
             {CC112X_AGC_REF, 0x3C},
-            {CC112X_AGC_CS_THR, 0x03},
+            {CC112X_AGC_CS_THR, 0xA9},
+            {CC112X_AGC_GAIN_ADJUST, 0x9A},
             {CC112X_AGC_CFG1, 0xA9},
             {CC112X_AGC_CFG0, 0xC0},
             /* FIFO_THR */
