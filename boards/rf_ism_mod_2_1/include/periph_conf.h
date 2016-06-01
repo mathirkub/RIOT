@@ -95,8 +95,8 @@ extern "C" {
  * @name UART configuration
  * @{
  */
-#define UART_NUMOF          (1U)
-#define UART_0_EN           0
+#define UART_NUMOF          (2U)
+#define UART_0_EN           1
 #define UART_1_EN           0
 #define UART_2_EN			1
 #define UART_0_IRQ_TX_PRIO  1
@@ -161,8 +161,8 @@ extern "C" {
  */
 #define GPIO_READS_SPI_PINS
 
-#define SPI_NUMOF           (2U)
-#define SPI_0_EN            1
+#define SPI_NUMOF           (1U)
+#define SPI_0_EN            0
 #define SPI_1_EN			0
 #define SPI_2_EN			1
 #define SPI_IRQ_PRIO        0

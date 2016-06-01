@@ -43,14 +43,6 @@ extern "C" {
 #define UART_STDIO_RX_BUFSIZE       (64U)
 /** @} */
 
-/**
- * @name UART device for TUNSLIP
- * @{
- */
-
-#define RF_ISM_MOD_2_1_SLIP     UART_1
-#define RF_ISM_MOD_2_1_SLIPBAUDRATE 115200
-
 #if UART_0_EN || UART_1_EN
 #define DISABLE_EM2
 #endif
