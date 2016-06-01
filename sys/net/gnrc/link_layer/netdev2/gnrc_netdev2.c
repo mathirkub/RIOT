@@ -23,6 +23,8 @@
 #include "msg.h"
 #include "thread.h"
 
+#include "od.h"
+
 #include "net/gnrc.h"
 #include "net/gnrc/nettype.h"
 #include "net/netdev2.h"
@@ -88,9 +90,35 @@ static void _event_cb(netdev2_t *dev, netdev2_event_t event, void *data)
         }
     }
 }
+//
+///**
+// * @brief   Make a raw dump of the given packet contents
+// */
+//static void pkt_print(gnrc_pktsnip_t *pkt)
+//{
+//    gnrc_pktsnip_t *snip = pkt;
+//
+//    /* How many packets in snip? */
+//    int pkt_cnt = gnrc_pkt_count(pkt);
+//    DEBUG("Snips count - %d\n", pkt_cnt);
+//    for(uint8_t cnt = 0; cnt < pkt_cnt; ++cnt) {
+//        if(snip != NULL) {
+//            DEBUG("Type %d, size %d\n", snip->type, snip->size);
+////            for(size_t i = 0; i < snip->size; i++) {
+////                DEBUG("%02x ", ((uint8_t * )(snip->data))[i]);
+////            }
+//            od_hex_dump(snip->data, snip->size, OD_WIDTH_DEFAULT);
+//            DEBUG("\n");
+//        }
+//        snip = snip->next;
+//    }
+//}
 
 static void _pass_on_packet(gnrc_pktsnip_t *pkt)
 {
+    /* printing packet */
+//    pkt_print(pkt);
+
     /* throw away packet if no one is interested */
     if (!gnrc_netapi_dispatch_receive(pkt->type, GNRC_NETREG_DEMUX_CTX_ALL, pkt)) {
         DEBUG("gnrc_netdev2: unable to forward packet of type %i\n", pkt->type);

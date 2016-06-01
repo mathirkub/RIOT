@@ -131,10 +131,9 @@ int uart_init_blocking(uart_t _uart, uint32_t baudrate)
     /* Enabling clock to USART0 */
     CMU_ClockEnable(cmuClock_USART0, true);
     /* Output PIN */
-    gpio_init(GPIO_T(UART_0_PORT, UART_0_TX_PIN), GPIO_DIR_PUSH_PULL,
-            GPIO_PULLUP);
-    gpio_init(GPIO_T(UART_0_PORT, UART_0_RX_PIN), GPIO_DIR_INPUT,
-            GPIO_PULLDOWN);
+    gpio_set(GPIO_T(UART_0_PORT, UART_0_TX_PIN));
+    gpio_init(GPIO_T(UART_0_PORT, UART_0_TX_PIN), GPIO_OUT);
+    gpio_init(GPIO_T(UART_0_PORT, UART_0_RX_PIN), GPIO_IN);
     /* Prepare struct for initializing UART in asynchronous mode*/
     uartInit.enable = usartDisable; /* Don't enable UART upon intialization */
     uartInit.refFreq = 0; /* Provide information on reference frequency.
@@ -161,10 +160,9 @@ int uart_init_blocking(uart_t _uart, uint32_t baudrate)
     uart = UART_1_DEV;
     CMU_ClockEnable(cmuClock_USART1, true);
     /* Output PIN */
-    gpio_init(GPIO_T(UART_1_PORT, UART_1_TX_PIN), GPIO_DIR_PUSH_PULL,
-            GPIO_PULLUP);
-    gpio_init(GPIO_T(UART_1_PORT, UART_1_RX_PIN), GPIO_DIR_INPUT,
-            GPIO_PULLDOWN);
+    gpio_set(GPIO_T(UART_1_PORT, UART_1_TX_PIN));
+    gpio_init(GPIO_T(UART_1_PORT, UART_1_TX_PIN), GPIO_OUT);
+    gpio_init(GPIO_T(UART_1_PORT, UART_1_RX_PIN), GPIO_IN);
     /* Prepare struct for initializing UART in asynchronous mode*/
     uartInit.enable = usartDisable; /* Don't enable UART upon intialization */
     uartInit.refFreq = 0; /* Provide information on reference frequency.

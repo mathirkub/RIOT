@@ -247,7 +247,7 @@ ssize_t _native_writev(int fd, const struct iovec *iov, int iovcnt)
 #endif
 int putchar(int c)
 {
-    _native_write(STDOUT_FILENO, &c, 1);
+    native_write(STDOUT_FILENO, &c, 1);
     return 0;
 }
 
