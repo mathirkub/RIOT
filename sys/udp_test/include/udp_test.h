@@ -32,38 +32,38 @@
 #include "riot/thread.hpp"
 #include "riot/condition_variable.hpp"
 
-namespace riot{
-namespace udp{
-
-typedef void (*udp_data_handler)(gnrc_pktsnip_t *pkt);
-
-class udp_test{
-public:
-    static udp_test& getInstace(){
-        static udp_test instance;
-        return instance;
-    }
-    inline void set_handler(udp_data_handler hndlr){
-        handler = hndlr;
-    }
-
-private:
-    static constexpr uint16_t port = 6666;
-    static gnrc_netreg_entry_t server;
-    static udp_data_handler handler;
-
-    static void *thread_function(void *arg);
-    char t_stack[THREAD_STACKSIZE_MAIN];
-
-    static void default_handler(gnrc_pktsnip_t *pkt);
-    udp_test();
-    ~udp_test();
-    int start_server(void);
-    int stop_server(void);
-};
-
-} // namespace udp
-} // namespace riot
+//namespace riot{
+//namespace udp{
+//
+//typedef void (*udp_data_handler)(gnrc_pktsnip_t *pkt);
+//
+//class udp_test{
+//public:
+//    static udp_test& getInstace(){
+//        static udp_test instance;
+//        return instance;
+//    }
+//    inline void set_handler(udp_data_handler hndlr){
+//        handler = hndlr;
+//    }
+//
+//private:
+//    static constexpr uint16_t port = 6666;
+//    static gnrc_netreg_entry_t server;
+//    static udp_data_handler handler;
+//
+//    static void *thread_function(void *arg);
+//    char t_stack[THREAD_STACKSIZE_MAIN];
+//
+//    static void default_handler(gnrc_pktsnip_t *pkt);
+//    udp_test();
+//    ~udp_test();
+//    int start_server(void);
+//    int stop_server(void);
+//};
+//
+//} // namespace udp
+//} // namespace riot
 
 #endif /* UDP_TEST_H */
 /** @} */

@@ -28,76 +28,77 @@
 #include "xtimer.h"
 #include "thread.h"
 
-#include "include/udp_test.h"
 
 #include "log.h"
 
-namespace riot{
-namespace udp{
 
-    void udp_test::default_handler(gnrc_pktsnip_t *pkt){
-        (void)pkt;
-    }
-
-    void *udp_test::thread_function(void *arg){
-        (void)arg;
-        puts("started");
-        msg_t msg, reply;
-        msg_t msg_queue[GNRC_PKTDUMP_MSG_QUEUE_SIZE];
-
-        /* setup the message queue */
-        msg_init_queue(msg_queue, GNRC_PKTDUMP_MSG_QUEUE_SIZE);
-
-        reply.content.value = (uint32_t)(-ENOTSUP);
-        reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
-        while(1){
-            msg_receive(&msg);
-                switch (msg.type) {
-                    case GNRC_NETAPI_MSG_TYPE_RCV:
-                        puts("PKTDUMP: data received:");
-                        break;
-                    case GNRC_NETAPI_MSG_TYPE_SND:
-                        puts("PKTDUMP: data to send:");
-                        break;
-                    case GNRC_NETAPI_MSG_TYPE_GET:
-                    case GNRC_NETAPI_MSG_TYPE_SET:
-                        msg_reply(&msg, &reply);
-                        break;
-                    default:
-                        puts("PKTDUMP: received something unexpected");
-                        break;
-                }
-        }
-
-        return NULL;
-    }
-
-    udp_test::udp_test() {
-        /* initializing udp data handler */
-        handler = default_handler;
-        /* initializing netreg entry */
-        server = { NULL, GNRC_NETREG_DEMUX_CTX_ALL, KERNEL_PID_UNDEF };
-        if(!start_server()){
-            LOG_ERROR("%s:%u Fatal error, cannot start UDP server...\n", __func__, __LINE__);
-            reboot();
-        }
-    }
-
-    int udp_test::start_server(){
-        /* check if server is already running */
-        if(server.pid!=KERNEL_PID_UNDEF) {
-            return 1;
-        }
-        /* start server (which means registering pktdump for the chosen port) */
-        server.pid = thread_create(t_stack, sizeof(t_stack), 1, THREAD_CREATE_STACKTEST, thread_function, NULL, "udp_test");
-        server.demux_ctx = (uint32_t)port;
-        if(gnrc_netreg_register(GNRC_NETTYPE_UDP, &server))
-            return -1;
-        LOG_INFO("Success: started UDP server on port %" PRIu16 "\n", port);
-        return 0;
-    }
-} // udp
-} // riot
+//
+//namespace riot{
+//namespace udp{
+//
+//    void udp_test::default_handler(gnrc_pktsnip_t *pkt){
+//        (void)pkt;
+//    }
+//
+//    void *udp_test::thread_function(void *arg){
+//        (void)arg;
+//        puts("started");
+//        msg_t msg, reply;
+//        msg_t msg_queue[GNRC_PKTDUMP_MSG_QUEUE_SIZE];
+//
+//        /* setup the message queue */
+//        msg_init_queue(msg_queue, GNRC_PKTDUMP_MSG_QUEUE_SIZE);
+//
+//        reply.content.value = (uint32_t)(-ENOTSUP);
+//        reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
+//        while(1){
+//            msg_receive(&msg);
+//                switch (msg.type) {
+//                    case GNRC_NETAPI_MSG_TYPE_RCV:
+//                        puts("PKTDUMP: data received:");
+//                        break;
+//                    case GNRC_NETAPI_MSG_TYPE_SND:
+//                        puts("PKTDUMP: data to send:");
+//                        break;
+//                    case GNRC_NETAPI_MSG_TYPE_GET:
+//                    case GNRC_NETAPI_MSG_TYPE_SET:
+//                        msg_reply(&msg, &reply);
+//                        break;
+//                    default:
+//                        puts("PKTDUMP: received something unexpected");
+//                        break;
+//                }
+//        }
+//
+//        return NULL;
+//    }
+//
+//    udp_test::udp_test() {
+//        /* initializing udp data handler */
+//        handler = default_handler;
+//        /* initializing netreg entry */
+//        server = { NULL, GNRC_NETREG_DEMUX_CTX_ALL, KERNEL_PID_UNDEF };
+//        if(!start_server()){
+//            LOG_ERROR("%s:%u Fatal error, cannot start UDP server...\n", __func__, __LINE__);
+//            reboot();
+//        }
+//    }
+//
+//    int udp_test::start_server(){
+//        /* check if server is already running */
+//        if(server.pid!=KERNEL_PID_UNDEF) {
+//            return 1;
+//        }
+//        /* start server (which means registering pktdump for the chosen port) */
+//        server.pid = thread_create(t_stack, sizeof(t_stack), 1, THREAD_CREATE_STACKTEST, thread_function, NULL, "udp_test");
+//        server.demux_ctx = (uint32_t)port;
+//        if(gnrc_netreg_register(GNRC_NETTYPE_UDP, &server))
+//            return -1;
+//        LOG_INFO("Success: started UDP server on port %" PRIu16 "\n", port);
+//        return 0;
+//    }
+//} // udp
+//} // riot
 
 //
 //int udp_test_server_init(void)
