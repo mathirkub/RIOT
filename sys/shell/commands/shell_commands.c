@@ -129,6 +129,10 @@ extern int _ccnl_interest(int argc, char **argv);
 extern int _ccnl_fib(int argc, char **argv);
 #endif
 
+#ifdef MODULE_UDP_TEST
+extern int _udp_test(int argc, char **argv);
+#endif
+
 const shell_command_t _shell_command_list[] = {
     {"reboot", "Reboot the node", _reboot_handler},
 #ifdef MODULE_CONFIG
@@ -213,6 +217,9 @@ const shell_command_t _shell_command_list[] = {
     { "ccnl_int", "sends an interest", _ccnl_interest},
     { "ccnl_cont", "create content and populated it", _ccnl_content},
     { "ccnl_fib", "shows or modifies the CCN-Lite FIB", _ccnl_fib},
+#endif
+#ifdef MODULE_UDP_TEST
+    { "udp_test", "runs udp test [init|deinit|send]", _udp_test},
 #endif
     {NULL, NULL, NULL}
 };

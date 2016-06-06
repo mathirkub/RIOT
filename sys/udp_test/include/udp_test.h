@@ -23,15 +23,22 @@
 #include "stdbool.h"
 #include "net/gnrc.h"
 
-#include <string>
-#include <cstdio>
-#include <cassert>
-#include <system_error>
-#include "riot/mutex.hpp"
-#include "riot/chrono.hpp"
-#include "riot/thread.hpp"
-#include "riot/condition_variable.hpp"
+#define MAXIMUM_DATA_LENGTH 60
 
+void get_random_data(uint8_t *data, uint8_t length);
+int udp_test_server_init(void);
+int udp_test_server_deinit(void);
+int32_t udp_test_send(char *addr_str, void *data, uint8_t len);
+
+//#include <string>
+//#include <cstdio>
+//#include <cassert>
+//#include <system_error>
+//#include "riot/mutex.hpp"
+//#include "riot/chrono.hpp"
+//#include "riot/thread.hpp"
+//#include "riot/condition_variable.hpp"
+//
 //namespace riot{
 //namespace udp{
 //

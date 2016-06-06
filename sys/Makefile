@@ -1,3 +1,6 @@
+ifneq (,$(filter udp_test,$(USEMODULE)))
+    DIRS += udp_test
+endif
 ifneq (,$(filter posix_semaphore,$(USEMODULE)))
     DIRS += posix/semaphore
 endif

@@ -2,6 +2,9 @@ MODULE = shell_commands
 
 SRC = shell_commands.c sc_sys.c
 
+ifneq (,$(filter udp_test,$(USEMODULE)))
+  SRC += sc_udp_test.c
+endif
 ifneq (,$(filter config,$(USEMODULE)))
   SRC += sc_id.c
 endif
