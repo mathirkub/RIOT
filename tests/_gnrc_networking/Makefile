@@ -25,17 +25,22 @@ USEMODULE += gnrc_rpl
 USEMODULE += gnrc_pktdump
 # Additional networking modules that can be dropped if not needed
 USEMODULE += gnrc_icmpv6_echo
+USEMODULE += gnrc_sixlowpan_iphc
+USEMODULE += udp_test
+USEMODULE += checksum
 # Add also the shell, some shell commands
 USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
 
-ifneq (,$(filter gnrc_netdev_default,$(USEMODULE)))
-    USEMODULE += cc112x gnrc_netdev2 gnrc_cc112x
-endif
-
-ifneq (,$(filter cc112x,$(USEMODULE)))
-    DISABLE_MODULE += gnrc_sixlowpan_iphc
+ifeq (,$(filter native,$(BOARD)))
+    ifneq (,$(filter gnrc_netdev_default,$(USEMODULE)))
+        USEMODULE += cc112x gnrc_netdev2 gnrc_cc112x
+    endif
+    
+    ifneq (,$(filter cc112x,$(USEMODULE)))
+        DISABLE_MODULE += gnrc_sixlowpan_iphc
+    endif
 endif
 
 # Comment this out to disable code in RIOT that does safety checking
