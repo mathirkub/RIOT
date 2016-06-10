@@ -23,7 +23,7 @@
 #include "stdbool.h"
 #include "net/gnrc.h"
 
-#define MAXIMUM_DATA_LENGTH 60
+#define MAXIMUM_DATA_LENGTH 100
 
 void get_random_data(uint8_t *data, uint8_t length);
 int udp_test_server_init(void);

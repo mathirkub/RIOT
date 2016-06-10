@@ -1,2 +1,8 @@
 # include headers
 export INCLUDES += -I$(RIOTBASE)/sys/udp_test/include
+
+ifneq (,$(filter udp_test%,$(USEMODULE)))
+  USEMODULE += shell
+  USEMODULE += checksum
+  USEMODULE += shell_commands
+endif

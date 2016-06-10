@@ -149,30 +149,32 @@ static int receive_packet(gnrc_pktsnip_t *pkt)
                 if(data_length) {
                     /* sending ACK to the sender */
                     ret = send_ack(pkt->next, hash);
-                    printf("Received message on UDP %d port (sending ack):\n", port);
-                    /* checking if the message is textual or just simple data */
-                    bool onlyChars = true;
-                    for(uint8_t a = 0; a<data_length; ++a) {
-                        if(data_pointer[a]<0x20 && data_pointer[a]!=0 && data_pointer[a]<127) {
-                            onlyChars = false;
-                            break;
-                        }
-                    }
-                    /* printing the message */
-                    if(onlyChars) {
-                        printf("\t");
-                        for(uint8_t a = 0; a<data_length; ++a)
-                            printf("%c", data_pointer[a]);
-                        printf("\n");
-                    } else {
-                        od_hex_dump(data_pointer, data_length, 16);
-                    }
+//                    if(true == verbose) {
+//                        printf("Received message on UDP %d port (sending ack):\n", port);
+//                        /* checking if the message is textual or just simple data */
+//                        bool onlyChars = true;
+//                        for(uint8_t a = 0; a<data_length; ++a) {
+//                            if(data_pointer[a]<0x20&&data_pointer[a]!=0&&data_pointer[a]<127) {
+//                                onlyChars = false;
+//                                break;
+//                            }
+//                        }
+//                        /* printing the message */
+//                        if(onlyChars) {
+//                            printf("\t");
+//                            for(uint8_t a = 0; a<data_length; ++a)
+//                                printf("%c", data_pointer[a]);
+//                            printf("\n");
+//                        } else {
+//                            od_hex_dump(data_pointer, data_length, 16);
+//                        }
+//                    }
                 } else {
                     LOG_INFO("%s:%u:Received ACK frame\n", __func__, __LINE__);
                     msg_t msg;
                     msg.sender_pid = thread_getpid();
                     msg.type = UDP_RECEIVED_ACK;
-                    msg.content.value = (uint32_t)((xtimer_now64()-udp_data.snd_time)/1000);
+                    msg.content.value = (uint32_t)((xtimer_now64()-udp_data.snd_time));
                     msg_send(&msg, 2);
                     ret = 0;
                 }
@@ -238,7 +240,7 @@ static void *thread_function(void *arg)
             } while(1);
             break;
         case GNRC_NETAPI_MSG_TYPE_GET:
-        case GNRC_NETAPI_MSG_TYPE_SET:
+            case GNRC_NETAPI_MSG_TYPE_SET:
             msg_reply(&msg, &reply);
             break;
         default:
@@ -260,7 +262,13 @@ int udp_test_server_init(void)
         return 1;
     }
     /* start server (which means registering pktdump for the chosen port) */
-    server.pid = thread_create(t_stack, sizeof(t_stack), THREAD_PRIORITY_MAIN-1, THREAD_CREATE_STACKTEST, thread_function, NULL, "udp_test");
+    server.pid = thread_create(t_stack, sizeof(t_stack), THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST, thread_function, NULL, "udp_test");
+    /* causes memory access violation
+     * 1# server.pid = thread_create(t_stack, sizeof(t_stack), THREAD_PRIORITY_MAIN, THREAD_CREATE_STACKTEST, thread_function, NULL, "udp_test");
+     * 2# server.pid = thread_create(t_stack, sizeof(t_stack), THREAD_PRIORITY_MAIN + 1, THREAD_CREATE_STACKTEST, thread_function, NULL, "udp_test");
+     * 3# server.pid = thread_create(t_stack, sizeof(t_stack), THREAD_PRIORITY_MAIN - 1, THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD, thread_function, NULL, "udp_test");
+     */
+
     server.demux_ctx = (uint32_t)port;
     if(gnrc_netreg_register(GNRC_NETTYPE_UDP, &server))
         return -1;
